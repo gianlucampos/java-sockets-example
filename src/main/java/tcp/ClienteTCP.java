@@ -22,18 +22,20 @@ public class ClienteTCP {
             this.readServerMessages();
             this.closeConnection();
         } catch (IOException ex) {
-            System.out.println("Não foi possível montar a conexão no cliente.");
+            System.out.println("Não foi possível conectar ao servidor!");
             System.out.println(ex.getMessage());
         }
     }
 
     private void openConnection() throws IOException {
+        System.out.println("Conectando ao servidor...");
         clientSocket = new Socket("localhost", 8888);
         in = new DataInputStream(clientSocket.getInputStream());
         out = new DataOutputStream(clientSocket.getOutputStream());
     }
 
     private void closeConnection() throws IOException {
+        System.out.println("Saindo do servidor...");
         in.close();
         out.close();
         clientSocket.close();

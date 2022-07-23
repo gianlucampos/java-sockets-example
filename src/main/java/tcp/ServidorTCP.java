@@ -13,9 +13,14 @@ public class ServidorTCP {
     private DataInputStream in;
     private DataOutputStream out;
 
-
     public static void main(String[] args) {
-        new ServidorTCP().start();
+        ServidorTCP server = new ServidorTCP();
+        Thread t1 = new Thread(server::start);
+        t1.start();
+
+        Thread t2 = new Thread(() -> new ClienteTCP().start());
+        t2.start();
+
     }
 
     private void start() {
@@ -32,6 +37,7 @@ public class ServidorTCP {
     }
 
     private void openConnection() throws IOException {
+        System.out.println("Iniciando servidor...");
         serverSocket = new ServerSocket(8888);
         socket = serverSocket.accept();
         in = new DataInputStream(socket.getInputStream());
@@ -39,6 +45,7 @@ public class ServidorTCP {
     }
 
     private void closeConnection() throws IOException {
+        System.out.println("Finalizando servidor...");
         in.close();
         out.close();
         socket.close();
