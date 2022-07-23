@@ -18,9 +18,9 @@ public class ClienteTCP {
     public void start() {
         try {
             this.openConnection();
-            this.writeMessage("Cliente 1 entrou!");
+            this.writeMessage(String.format("[Cliente %s]: Olá", clientSocket.getLocalPort()));
             this.readServerMessages();
-            this.closeConnection();
+//            this.closeConnection();
         } catch (IOException ex) {
             System.out.println("Não foi possível conectar ao servidor!");
             System.out.println(ex.getMessage());
@@ -28,14 +28,16 @@ public class ClienteTCP {
     }
 
     private void openConnection() throws IOException {
-        System.out.println("Conectando ao servidor...");
         clientSocket = new Socket("localhost", 8888);
         in = new DataInputStream(clientSocket.getInputStream());
         out = new DataOutputStream(clientSocket.getOutputStream());
+        String cliente = String.format("[Cliente %s]: ", clientSocket.getLocalPort());
+        System.out.println(cliente + "Conectando ao servidor...");
     }
 
     private void closeConnection() throws IOException {
-        System.out.println("Saindo do servidor...");
+        String cliente = String.format("[Cliente %s]: ", clientSocket.getLocalPort());
+        System.out.println(cliente + "Saindo do servidor...");
         in.close();
         out.close();
         clientSocket.close();
@@ -44,7 +46,8 @@ public class ClienteTCP {
     private void readServerMessages() throws IOException {
         String msgServidor = in.readUTF();
 
-        System.out.println("Mensagem do Servidor: " + msgServidor);
+        String cliente = String.format("[Cliente %s]: ", clientSocket.getLocalPort());
+        System.out.println(cliente + "Mensagem do Servidor: " + msgServidor);
     }
 
     private void writeMessage(String message) throws IOException {
