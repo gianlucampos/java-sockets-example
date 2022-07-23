@@ -7,28 +7,47 @@ import java.net.Socket;
 
 public class ClienteTCP {
 
+    private Socket clientSocket;
+    private DataInputStream in;
+    private DataOutputStream out;
+
     public static void main(String[] args) {
-        try (Socket clientSocket = new Socket("localhost", 8888)) {
+        new ClienteTCP().start();
+    }
 
-            DataInputStream in = new DataInputStream(clientSocket.getInputStream());
-            DataOutputStream out = new DataOutputStream(clientSocket.getOutputStream());
-
-            out.writeUTF("Cliente 1");
-
-            String msgServidor = in.readUTF();
-
-            System.out.println("Mensagem do Servidor: " + msgServidor);
-            System.out.println("IP do Servidor: " + clientSocket.getInetAddress().getHostAddress());
-            System.out.println("Porta do Servidor: " + clientSocket.getPort());
-            System.out.println("IP do Cliente: " + clientSocket.getLocalAddress().getHostAddress());
-            System.out.println("Porta do Cliente: " + clientSocket.getLocalPort());
-
-            in.close();
-            out.close();
+    public void start() {
+        try {
+            this.openConnection();
+            this.writeMessage("Cliente 1 entrou!");
+            this.readServerMessages();
+            this.closeConnection();
         } catch (IOException ex) {
             System.out.println("Não foi possível montar a conexão no cliente.");
-            ex.printStackTrace();
+            System.out.println(ex.getMessage());
         }
     }
+
+    private void openConnection() throws IOException {
+        clientSocket = new Socket("localhost", 8888);
+        in = new DataInputStream(clientSocket.getInputStream());
+        out = new DataOutputStream(clientSocket.getOutputStream());
+    }
+
+    private void closeConnection() throws IOException {
+        in.close();
+        out.close();
+        clientSocket.close();
+    }
+
+    private void readServerMessages() throws IOException {
+        String msgServidor = in.readUTF();
+
+        System.out.println("Mensagem do Servidor: " + msgServidor);
+    }
+
+    private void writeMessage(String message) throws IOException {
+        out.writeUTF(message);
+    }
+
 
 }
